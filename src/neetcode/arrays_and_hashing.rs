@@ -50,13 +50,15 @@ pub fn is_anagram_better(s: String, t: String) -> bool {
 }
 
 pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {
-    for (e1, n1) in (&nums).iter().enumerate() {
-        for (e2, n2) in (&nums).iter().enumerate() {
-            if e1 == e2 {
-                continue;
+    let mut map: HashMap<i32, i32> = HashMap::new();
+
+    for (e, n) in (&nums).iter().enumerate() {
+        match map.get(&n) {
+            None => {
+                map.insert(target - n, e as i32);
             }
-            if n1 + n2 == target {
-                return vec![e1 as i32, e2 as i32];
+            Some(v) => {
+                return vec![*v, e as i32];
             }
         }
     }
@@ -87,5 +89,6 @@ mod test {
     #[test]
     fn test_two_sum() {
         assert_eq!(two_sum(vec![1, 5, 7, 9], 6), [0, 1]);
+        assert_eq!(two_sum(vec![-1, -2, -3, -4, -5], -8), [2, 4]);
     }
 }
