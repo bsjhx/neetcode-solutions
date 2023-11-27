@@ -84,6 +84,8 @@ mod test {
         assert_eq!(is_anagram("words".into(), "sword".into()), true);
         assert_eq!(is_anagram("one".into(), "two".into()), false);
         assert_eq!(is_anagram("aacc".into(), "ccac".into()), false);
+
+        assert_eq!(is_anagram_better("aacc".into(), "ccac".into()), false);
     }
 
     #[test]
