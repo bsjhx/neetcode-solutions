@@ -2,9 +2,6 @@
 mod test {
 
     pub fn search(nums: Vec<i32>, target: i32) -> i32 {
-        let mut pos = nums.len() / 2;
-        let mut last_pos = pos;
-
         let (mut l, mut r) = (0, nums.len());
 
         while l < r {
