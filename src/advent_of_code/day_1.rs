@@ -79,8 +79,6 @@ fn find_first_and_last_numbers(s: &str) -> i32 {
         return 0;
     }
 
-    print!("{} - ", s);
-
     let s = replace_words_number_with_digits(s);
 
     let s: Vec<char> = s
@@ -89,12 +87,8 @@ fn find_first_and_last_numbers(s: &str) -> i32 {
         .filter(|c| ('0'..='9').contains(c))
         .collect();
 
-    print!("{:?} - ", s);
-
     let mut result = s[0].to_string();
     result.push(s[s.len() - 1]);
-
-    println!("{}", result);
 
     result.parse::<i32>().unwrap()
 }
@@ -115,7 +109,7 @@ fn create_words_map() -> HashMap<String, i32> {
 
 #[cfg(test)]
 mod test {
-    use crate::day_1::{calculate, replace_words_number_with_digits};
+    use crate::day_1::calculate;
 
     #[test]
     fn test_calc() {
