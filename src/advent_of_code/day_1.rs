@@ -1,12 +1,16 @@
 use std::fs::read_to_string;
 use std::path::Path;
+use std::str::Lines;
 
-fn calculate() -> i32 {
+pub fn calculate_calibration_document(path: &str) -> i32 {
+    let lines = read_to_string(Path::new(path)).unwrap();
+    let lines = lines.lines();
+    calculate(lines)
+}
+
+fn calculate(lines: Lines) -> i32 {
     let mut sum = 0;
-    for line in read_to_string(Path::new("./src/advent_of_code/data_1.txt"))
-        .unwrap()
-        .lines()
-    {
+    for line in lines.into_iter() {
         sum = sum + find_first_and_last_numbers(line);
     }
 
@@ -31,11 +35,14 @@ fn find_first_and_last_numbers(s: &str) -> i32 {
 
 #[cfg(test)]
 mod test {
-    use crate::advent_of_code::day_1::calculate;
+    use crate::day_1::calculate;
 
     #[test]
-    fn calc() {
-        let a = calculate();
-        println!("{}", a);
+    fn test_calc() {
+        let lines = "1ala5\ngfh5gf8hfg6fg".lines();
+        assert_eq!(calculate(lines), 15 + 56);
+
+        let lines = "dsfsd9fsdfsd\n1ala5\ngfh5gfhfg6fg\n1".lines();
+        assert_eq!(calculate(lines), 99 + 15 + 56 + 11);
     }
 }
