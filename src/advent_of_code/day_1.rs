@@ -25,7 +25,7 @@ fn calculate(lines: Lines) -> i32 {
 }
 
 fn replace_words_number_with_digits(s: &str) -> String {
-    let mut words = create_words_map();
+    let words = create_words_map();
     let mut s2 = s.to_string();
     let (mut min, mut max) = (i32::MAX, -1);
     let (mut min_word, mut max_word) = ("", "");
