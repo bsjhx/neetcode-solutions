@@ -2,58 +2,53 @@ use std::fs::read_to_string;
 use std::path::Path;
 use std::str::Lines;
 
-// only 12 red cubes, 13 green cubes, and 14 blue cubes
-
-const RED: i32 = 12;
-const GREEN: i32 = 13;
-const BLUE: i32 = 14;
-
 pub fn calculate_games(path: &str) -> i32 {
     let lines = read_to_string(Path::new(path)).unwrap();
     let lines = lines.lines();
     calculate(lines)
 }
 
-// Game 1: 2 blue, 3 red; 3 green, 3 blue, 6 red; 4 blue, 6 red; 2 green, 2 blue, 9 red; 2 red, 4 blue
 fn calculate(lines: Lines) -> i32 {
     let mut sum = 0;
 
-    for (c, line) in lines.enumerate() {
-        let mut games = line.split(":").collect::<Vec<&str>>()[1];
-        let games = games.split(";");
+    for line in lines.into_iter() {
+        let game = line.split(":").collect::<Vec<&str>>()[1];
+        let sets = game.split(";");
 
-        let mut is_possible = true;
+        let (mut r, mut g, mut b) = (0, 0, 0);
 
-        for game in games.into_iter() {
-            let pos = game.split(",");
+        for set in sets.into_iter() {
+            let single_reveal = set.split(",");
 
-            for po in pos.into_iter() {
-                let ber = po.split(" ").collect::<Vec<&str>>();
-                match ber[2] {
+            for revealed_cubes in single_reveal.into_iter() {
+                let temp = revealed_cubes.split(" ").collect::<Vec<&str>>();
+                match temp[2] {
                     "red" => {
-                        if ber[1].parse::<i32>().unwrap() > RED {
-                            is_possible = false;
+                        if get_count(&temp) > r {
+                            r = get_count(&temp)
                         }
                     }
                     "green" => {
-                        if ber[1].parse::<i32>().unwrap() > GREEN {
-                            is_possible = false;
+                        if get_count(&temp) > g {
+                            g = get_count(&temp)
                         }
                     }
                     "blue" => {
-                        if ber[1].parse::<i32>().unwrap() > BLUE {
-                            is_possible = false;
+                        if get_count(&temp) > b {
+                            b = get_count(&temp)
                         }
                     }
                     &_ => {}
                 }
             }
         }
-        if is_possible {
-            sum += (c + 1) as i32;
-        }
+        sum = sum + (r * g * b);
     }
     sum
+}
+
+fn get_count(temp: &Vec<&str>) -> i32 {
+    temp[1].parse::<i32>().unwrap()
 }
 
 #[cfg(test)]
@@ -68,6 +63,6 @@ mod test {
 
     #[test]
     fn test_calculate_games() {
-        assert_eq!(calculate(TEXT.lines()), 8);
+        assert_eq!(calculate(TEXT.lines()), 2286);
     }
 }
