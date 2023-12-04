@@ -115,7 +115,7 @@ fn create_words_map() -> HashMap<String, i32> {
 
 #[cfg(test)]
 mod test {
-    use crate::day_1::calculate;
+    use crate::day_1::{calculate, replace_words_number_with_digits};
 
     #[test]
     fn test_calc() {
