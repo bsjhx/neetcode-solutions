@@ -17,34 +17,20 @@ fn calculate(lines: Lines) -> i32 {
     let mut next_line: Vec<char> = iterator.next().unwrap().chars().collect();
 
     loop {
-        let mut temp = "".to_string();
         for (i, c) in curr_line.clone().into_iter().enumerate() {
-            if c.is_numeric() {
-                temp.push(c);
-            } else if !temp.is_empty() {
-                if has_line_special_signs(i, temp.len(), prev_line.clone())
-                    || has_line_special_signs(i, temp.len(), curr_line.clone())
-                    || has_line_special_signs(i, temp.len(), next_line.clone())
-                {
-                    sum += temp.parse::<i32>().unwrap();
-                    temp = "".to_string();
-                } else {
-                    temp = "".to_string();
-                }
-            }
-        }
-
-        if temp != "" {
-            if has_line_special_signs(prev_line.len() - 1, temp.len(), prev_line.clone())
-                || has_line_special_signs(curr_line.len() - 1, temp.len(), curr_line.clone())
-                || has_line_special_signs(next_line.len() - 1, temp.len(), next_line.clone())
-            {
-                sum += temp.parse::<i32>().unwrap();
+            if c == '*' {
+                match find(i, &prev_line, &curr_line, &next_line) {
+                    None => (),
+                    Some(ratio) => {
+                        sum += ratio;
+                    }
+                };
             }
         }
 
         prev_line = curr_line.clone();
         curr_line = next_line.clone();
+        println!("{:?}", curr_line);
         if curr_line.is_empty() {
             return sum;
         }
@@ -55,30 +41,45 @@ fn calculate(lines: Lines) -> i32 {
     }
 }
 
-fn has_line_special_signs(pos: usize, len: usize, line: Vec<char>) -> bool {
-    if line.is_empty() {
-        return false;
-    }
+fn find(star_pos: usize, prev: &Vec<char>, curr: &Vec<char>, next: &Vec<char>) -> Option<i32> {
+    let mut res = find_numbers_in(star_pos, prev);
+    let mut res2 = find_numbers_in(star_pos, curr);
+    let mut res3 = find_numbers_in(star_pos, next);
+    res.append(&mut res2);
+    res.append(&mut res3);
 
-    let right = if pos == len { 0 } else { pos - len - 1 };
-    let left = if pos >= line.len() {
-        line.len() - 1
+    if res.len() != 2 {
+        None
     } else {
-        pos
-    };
-    let slice = &line[right..=left];
+        Some(res[0] * res[1])
+    }
+}
 
-    slice
-        .iter()
-        .filter(|c| !c.is_numeric())
-        .filter(|c| **c != '.')
-        .count()
-        != 0
+fn find_numbers_in(star_pos: usize, prev: &Vec<char>) -> Vec<i32> {
+    let mut temp = "".to_string();
+    let mut res = vec![];
+    for (i, c) in prev.iter().enumerate() {
+        if c.is_numeric() {
+            temp.push(*c);
+        } else if !temp.is_empty() {
+            let kkk = star_pos + temp.len() + 1;
+            if i >= star_pos && i <= kkk {
+                res.push(temp.parse::<i32>().unwrap());
+                temp = "".to_string();
+            } else {
+                temp = "".to_string();
+            }
+        }
+    }
+    if temp != "" {
+        res.push(temp.parse::<i32>().unwrap());
+    }
+    res
 }
 
 #[cfg(test)]
 mod test {
-    use crate::day_3::{calculate, has_line_special_signs};
+    use crate::day_3::calculate;
 
     const TEXT: &str = "467..114..
 ...*......
@@ -87,46 +88,16 @@ mod test {
 617*......
 .....+.58.
 ..592.....
-......755.
-...$.*....
+.......755
+...$..*...
 .664.598..";
 
     #[test]
     fn calculate_gear() {
-        let result = calculate("...5..\n..*...\n......".lines());
-        assert_eq!(result, 5);
+        let result = calculate("......\n.5*6..\n......".lines());
+        assert_eq!(result, 30);
 
         let result = calculate(TEXT.lines());
-        assert_eq!(result, 4361);
-    }
-
-    #[test]
-    fn test_check_line() {
-        let expected = vec![
-            (3, 2, vec!['.', '.', '.', '.', '.'], false),
-            (3, 2, vec!['1', '1', '1', '1', '1'], false),
-            (3, 2, vec!['.', '.', '*', '.', '.'], true),
-            (3, 2, vec!['.', '1', '1', 'a', '.'], true),
-            (3, 2, vec!['.', '.', '.', '9', '.'], false),
-            (3, 2, vec!['.', '.', '.', '9', 'a'], false),
-            (3, 2, vec!['*', '.', '.', '9', 'a'], true),
-            (3, 2, vec!['*', '.', '.', '9', 'a'], true),
-            (4, 2, vec!['*', '.', '5', '9', 'a'], true),
-            (4, 2, vec!['*', '.', '5', '9', '.'], false),
-            (3, 1, vec!['*', '.', '.', '9', 'a'], false),
-            (6, 2, vec!['*', '.', '.', '9', 'a', '.', 'a'], true),
-            (7, 2, vec!['*', '.', '.', '9', 'a', '.', 'a'], true),
-            (2, 2, vec!['*', '.', '.', '9', 'a'], true),
-            (
-                6,
-                3,
-                vec!['*', '.', '.', '9', 'a', '*', '.', '.', '9', 'a'],
-                true,
-            ),
-        ];
-
-        for ex in expected {
-            assert_eq!(has_line_special_signs(ex.0, ex.1, ex.2), ex.3);
-        }
+        assert_eq!(result, 467835);
     }
 }
