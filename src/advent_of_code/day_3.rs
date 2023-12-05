@@ -28,11 +28,20 @@ fn calculate(lines: Lines) -> i32 {
                 {
                     sum += temp.parse::<i32>().unwrap();
                     temp = "".to_string();
+                } else {
+                    temp = "".to_string();
                 }
             }
         }
 
-        if temp != "" {}
+        if temp != "" {
+            if has_line_special_signs(prev_line.len() - 1, temp.len(), prev_line.clone())
+                || has_line_special_signs(curr_line.len() - 1, temp.len(), curr_line.clone())
+                || has_line_special_signs(next_line.len() - 1, temp.len(), next_line.clone())
+            {
+                sum += temp.parse::<i32>().unwrap();
+            }
+        }
 
         prev_line = curr_line.clone();
         curr_line = next_line.clone();
