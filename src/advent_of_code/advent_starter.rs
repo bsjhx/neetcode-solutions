@@ -2,10 +2,12 @@ mod day_1;
 mod day_2;
 mod day_3;
 mod day_4;
+mod day_6;
 
 use crate::day_2::calculate_games;
 use crate::day_3::calculate_gear;
 use crate::day_4::calculate_card;
+use crate::day_6::calculate_races;
 use day_1::calculate_calibration_document;
 
 fn main() {
@@ -29,5 +31,9 @@ fn main() {
     println!("Day 4");
     let answer_day_4 = calculate_card("./src/advent_of_code/data/data_4.txt");
     println!("Day 4 answer: {}", answer_day_4);
+    println!("*************\n");
+    println!("Day 6");
+    let answer_day_6 = calculate_races();
+    println!("Day 6 answer: {}", answer_day_6);
     println!("*************\n");
 }
