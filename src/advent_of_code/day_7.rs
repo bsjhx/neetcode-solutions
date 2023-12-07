@@ -38,7 +38,6 @@ fn compare(h1: &str, h2: &str) -> Ordering {
     cards.insert('A', 14);
     cards.insert('K', 13);
     cards.insert('Q', 12);
-    cards.insert('J', 11);
     cards.insert('T', 10);
     cards.insert('9', 9);
     cards.insert('8', 8);
@@ -48,7 +47,7 @@ fn compare(h1: &str, h2: &str) -> Ordering {
     cards.insert('4', 4);
     cards.insert('3', 3);
     cards.insert('2', 2);
-    cards.insert('1', 1);
+    cards.insert('J', 1);
 
     if rank1 == rank2 {
         let zipped = h1.chars().into_iter().zip(h2.chars().into_iter());
@@ -74,8 +73,23 @@ fn calculate_rank(hand: &str) -> i32 {
     for c in hand.chars().into_iter() {
         *m.entry(c).or_default() += 1;
     }
-    let values = m.values().collect::<Vec<_>>();
 
+    // revalidate Js
+    if m.get(&'J').is_some() {
+        let js = *m.get(&'J').unwrap();
+        m.remove(&'J');
+        let mut max = 0;
+        let mut max_key = 'a';
+        for el in m.iter() {
+            if el.1 > &max {
+                max_key = *el.0;
+                max = *el.1;
+            }
+        }
+        *m.entry(max_key).or_default() += js;
+    }
+
+    let values = m.values().collect::<Vec<_>>();
     // 12345
     if values.len() == 5 {
         return 1;
@@ -117,21 +131,21 @@ mod test {
     use crate::day_7::*;
 
     #[test]
-    fn test_sort_list() {
+    fn test_all() {
         let t = "32T3K 765
 T55J5 684
 KK677 28
 KTJJT 220
 QQQJA 483";
 
-        assert_eq!(calculate(t.lines()), 6440);
+        assert_eq!(calculate(t.lines()), 5905);
     }
 
     #[test]
     fn test_compare() {
         assert_eq!(compare("AAAAA", "AAQAA"), Ordering::Greater);
         assert_eq!(compare("KAAAA", "AAKAA"), Ordering::Less);
-        assert_eq!(compare("12345", "23451"), Ordering::Less);
+        assert_eq!(compare("23456", "34562"), Ordering::Less);
     }
 
     #[test]
@@ -143,6 +157,7 @@ QQQJA 483";
         assert_eq!(calculate_rank("45545"), 5);
         assert_eq!(calculate_rank("12345"), 1);
         assert_eq!(calculate_rank("AKA99"), 3);
-        assert_eq!(calculate_rank("T55J5"), 4);
+        assert_eq!(calculate_rank("T55J5"), 6);
+        assert_eq!(calculate_rank("23J56"), 2);
     }
 }
