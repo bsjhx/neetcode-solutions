@@ -30,7 +30,7 @@ fn calculate(lines: Lines) -> i32 {
 
         prev_line = curr_line.clone();
         curr_line = next_line.clone();
-        println!("{:?}", curr_line);
+        // println!("{:?}", curr_line);
         if curr_line.is_empty() {
             return sum;
         }
