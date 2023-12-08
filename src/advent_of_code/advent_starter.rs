@@ -4,12 +4,14 @@ mod day_3;
 mod day_4;
 mod day_6;
 mod day_7;
+mod day_8;
 
 use crate::day_2::calculate_games;
 use crate::day_3::calculate_gear;
 use crate::day_4::calculate_card;
 use crate::day_6::calculate_races;
 use crate::day_7::calculate_poker;
+use crate::day_8::calculate_map;
 use day_1::calculate_calibration_document;
 
 fn main() {
@@ -42,5 +44,10 @@ fn main() {
     println!("Day 7");
     let answer_day_7 = calculate_poker("./src/advent_of_code/data/data_7.txt");
     println!("Day 7 answer: {}", answer_day_7);
+    println!("*************\n");
+    println!("*************");
+    println!("Day 8");
+    let answer_day_8 = calculate_map("./src/advent_of_code/data/data_8.txt");
+    println!("Day 8 answer: {}", answer_day_8);
     println!("*************\n");
 }
