@@ -3,13 +3,13 @@ use std::fs::read_to_string;
 use std::path::Path;
 use std::str::Lines;
 
-pub fn calculate_map(path: &str) -> i32 {
+pub fn calculate_map(path: &str) -> i64 {
     let lines = read_to_string(Path::new(path)).unwrap();
     let lines = lines.lines();
     calculate(lines)
 }
 
-fn calculate(lines: Lines) -> i32 {
+fn calculate(lines: Lines) -> i64 {
     let lines = lines.into_iter().collect::<Vec<_>>();
     let mut path = "".to_string();
     let mut map = HashMap::new(); // str -> (str, str) N -> ( L,R)
@@ -33,22 +33,46 @@ fn calculate(lines: Lines) -> i32 {
     }
 
     let mut counter = 0;
-    let mut curr = "AAA".to_string();
-    loop {
-        for c in path.chars().into_iter() {
-            let node = map.get(curr.as_str()).unwrap();
-            curr = if c == 'L' {
-                node.0.clone()
-            } else {
-                node.1.clone()
-            };
+    let mut currs = vec![];
 
-            counter += 1;
-            if curr == "ZZZ" {
-                return counter;
-            }
+    for key in map.keys().into_iter() {
+        if key.ends_with('A') {
+            currs.push(key.clone());
         }
     }
+
+    loop {
+        for c in path.chars().into_iter() {
+            counter += 1;
+            let mut new_currs = vec![];
+            for curr in currs {
+                let node = map.get(curr.as_str()).unwrap();
+                new_currs.push(if c == 'L' {
+                    node.0.clone()
+                } else {
+                    node.1.clone()
+                });
+            }
+            if are_all_nodes_ends_with_z(&new_currs) {
+                return counter;
+            }
+            if counter % 100_000_000 == 0 {
+                println!("wow {}", counter);
+            }
+            currs = new_currs.clone();
+        }
+    }
+}
+
+fn are_all_nodes_ends_with_z(nodes: &Vec<String>) -> bool {
+    for node in nodes.into_iter() {
+        let a = node.chars().collect::<Vec<_>>();
+        if a[2] != 'Z' {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 #[cfg(test)]
@@ -61,19 +85,19 @@ AAA = (BBB, BBB)
 BBB = (AAA, ZZZ)
 ZZZ = (ZZZ, ZZZ)";
 
-    const TEXT2: &str = "RL
+    const TEXT2: &str = "LR
 
-AAA = (BBB, CCC)
-BBB = (DDD, EEE)
-CCC = (ZZZ, GGG)
-DDD = (DDD, DDD)
-EEE = (EEE, EEE)
-GGG = (GGG, GGG)
-ZZZ = (ZZZ, ZZZ)";
+11A = (11B, XXX)
+11B = (XXX, 11Z)
+11Z = (11B, XXX)
+22A = (22B, XXX)
+22B = (22C, 22C)
+22C = (22Z, 22Z)
+22Z = (22B, 22B)
+XXX = (XXX, XXX)";
 
     #[test]
     fn test_calculate() {
-        assert_eq!(calculate(TEXT.lines()), 6);
-        assert_eq!(calculate(TEXT2.lines()), 2);
+        assert_eq!(calculate(TEXT2.lines()), 6);
     }
 }
