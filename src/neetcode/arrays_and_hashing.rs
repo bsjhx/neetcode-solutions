@@ -68,7 +68,9 @@ pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use crate::neetcode::arrays_and_hashing::{
+        contains_duplicate, is_anagram, is_anagram_better, two_sum,
+    };
 
     #[test]
     fn test_contains_duplicate() {

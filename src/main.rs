@@ -1,4 +1,4 @@
-mod bool_to_world;
+mod learning_with_linked_list;
 mod neetcode;
 
 fn main() {
